@@ -1,0 +1,151 @@
+USE DATABASE SALE_DATA;
+CREATE OR REPLACE TABLE MG_SALE
+(ORDER_ID VARCHAR(100),
+ORDER_DATE DATE PRIMARY KEY,
+SHIP_DATE DATE,
+SHIP_MODE VARCHAR(200),
+CUSTOMER_NAME VARCHAR(200),
+SEGMENT VARCHAR (100),
+ STATE VARCHAR (100),
+COUNTRY_REGION VARCHAR (100),
+MARKET VARCHAR (100),
+REGION VARCHAR (100),
+PRODUCT_ID VARCHAR (100),
+CATEGORY VARCHAR (100),
+SUB_CATEGORY VARCHAR (100),
+PRODUCT_NAME VARCHAR (200),
+SALES VARCHAR (100),
+QUANTITY VARCHAR (100),
+ DISCOUNT VARCHAR (100),
+PROFIT VARCHAR (200),
+SHIPPING_COST VARCHAR(200),
+ORDER_PRIORITY VARCHAR(100),
+YEAR VARCHAR (100));
+
+DESCRIBE TABLE MG_SALE;
+SELECT *FROM MG_SALE;                   -----THIS IS Q.1 IS RESOLVED 
+
+ALTER TABLE MG_SALE
+DROP PRIMARY KEY;
+
+-- ADD PRIMARY KEY ORDER ID
+ALTER TABLE MG_SALE
+ADD PRIMARY KEY (ORDER_ID);
+
+DESCRIBE TABLE MG_SALE;---RESULT                  --THIS IS Q.2 IS RESOLVED 
+---------XX--------------XX--------------------XX------------------XXX--------------------------XXX
+ALTER TABLE MG_SALE
+ADD COLUMN ORDER_EXTRACT VARCHAR (100);
+
+
+
+select * from MG_SALE;
+
+CREATE OR REPLACE TABLE MG_SALE_DATA AS
+SELECT * FROM MG_SALE;
+
+DESCRIBE TABLE MG_SALE_DATA;
+
+select * from MG_SALE_DATA;
+
+ALTER TABLE MG_SALE_DATA
+ADD PRIMARY KEY (ORDER_ID);
+
+DESCRIBE TABLE MG_SALE_DATA;
+
+ALTER TABLE MG_SALE_DATA
+ADD COLUMN ORDER_EXTRACT VARCHAR (100);
+
+DESCRIBE TABLE MG_SALE_DATA;                         ---THIS IS Q.3 IS RESOLVED (DATE IDENTIFIER )
+
+-----X-------X--------X------X--------X----X---------X-----X---------X---------
+
+
+
+SELECT SUBSTRING ('MAHADEV',6,2);
+SELECT *,
+          SUBSTRING (ORDER_ID,9) AS ORDER_EXTRACT
+          FROM MG_SALE_DATA;
+          
+          SELECT * FROM MG_SALE_DATA;
+          
+UPDATE MG_SALE_DATA
+SET ORDER_EXTRACT = SUBSTRING (ORDER_ID,9) ;
+
+SELECT * FROM  MG_SALE_DATA;                        --QUESTION 4 IS RESOLVED 
+          
+------- --XX --------- XX--------------------XX----------------------XX-----------------------------XX------------------------XX       
+--Create a new column called Discount Flag and categorize it based on discount.
+--Use ‘Yes’ if the discount is greater than zero else ‘No’.   
+
+
+          
+  SELECT *,
+         CASE WHEN DISCOUNT > '0' THEN 'YES'
+         ELSE 'NO'
+         END AS DISCOUNT_FLAG
+         FROM MG_SALE_DATA;
+         
+ ALTER TABLE MG_SALE_DATA
+ ADD COLUMN DISCOUNT_FLAG VARCHAR (50);    
+ 
+ DESCRIBE TABLE  MG_SALE_DATA;
+ 
+ UPDATE MG_SALE_DATA
+ SET DISCOUNT_FLAG =( CASE WHEN DISCOUNT > '0' THEN 'YES'
+         ELSE 'NO'
+          END);
+ 
+ SELECT * FROM MG_SALE_DATA;                            ----THIS IS QUESTIONS NO. 5 SOLVED (DISCOUNT FLAG)
+         
+ ----------XX-------------------XX-----------------------------------XX--------------------XX----------------------------------XX         
+          
+ --Create a new column called process days and calculate how many days it takes
+--for each order id to process from the order to its shipment. 
+
+
+SELECT DATEDIFF(DAY ,ORDER_DATE,SHIP_DATE)
+FROM MG_SALE_DATA;
+
+ALTER TABLE MG_SALE_DATA
+ADD COLUMN PROCESS_DAYS VARCHAR(50);
+
+DESCRIBE TABLE MG_SALE_DATA;
+
+UPDATE MG_SALE_DATA
+SET PROCESS_DAYS = DATEDIFF(DAY ,ORDER_DATE,SHIP_DATE);
+
+SELECT * FROM MG_SALE_DATA; -------------------------THIS IS SOLVED Q.6 (PROCESS DAYS)
+--------XX------------------XX--------------------XX--------------------XX------------------XX--------------------------------XX
+---7. Create a new column called Rating and then based on the Process dates give
+--rating like given below.
+--a. If process days less than or equal to 3days then rating should be 5
+--b. If process days are greater than 3 and less than or equal to 6 then rating
+--should be 4
+--c. If process days are greater than 6 and less than or equal to 10 then rating
+--should be 3
+---d. If process days are greater than 10 then the rating should be 2.
+          
+    SELECT *,
+            CASE WHEN PROCESS_DAYS <= 3 THEN '*****'
+                 WHEN PROCESS_DAYS >3<= 6 THEN '****'
+                 WHEN PROCESS_DAYS > 6 <= 10 THEN '***'
+                 ELSE '**'
+                 END AS RATING
+                 FROM MG_SALE_DATA;
+                 
+  ALTER TABLE MG_SALE_DATA
+  ADD COLUMN RATING VARCHAR (50);
+  
+  DESCRIBE TABLE MG_SALE_DATA;
+                 
+  UPDATE MG_SALE_DATA
+  SET RATING = (CASE WHEN PROCESS_DAYS <= 3 THEN '*****'
+                 WHEN PROCESS_DAYS >3<= 6 THEN '****'
+                 WHEN PROCESS_DAYS > 6 <= 10 THEN '***'
+                 WHEN PROCESS_DAYS > 10 THEN '**'
+                 ELSE 'NA'
+                 END);
+    
+ SELECT * FROM MG_SALE_DATA;         ----THIS IS QUESTION NO .7 IS RESOLVED (RATING )
+          
